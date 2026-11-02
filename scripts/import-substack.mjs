@@ -1,7 +1,9 @@
 // Usage: node scripts/import-substack.mjs <substack-post-url>
-// Saves the post body to content/posts/<slug>.html, its cover to assets/covers/,
+// Saves the post body to content/posts/<slug>.html, its cover to assets/covers/ (original jpg + 1-bit png for cards),
 // and adds (or refreshes) its entry in content/posts.json. Run build.mjs afterwards.
 import { readFile, writeFile, mkdir } from "node:fs/promises";
+import { execFileSync } from "node:child_process";
+import { fileURLToPath } from "node:url";
 
 const url = process.argv[2];
 if (!url) {
@@ -22,11 +24,19 @@ let body = match(html, /<div class="body markup"[^>]*>([\s\S]*?)<\/div><div clas
 const coverSrc = html.match(/"src":"(https:\/\/substack-post-media[^"]+)"/)?.[1]
   ?? body.match(/&quot;src&quot;:&quot;(https:\/\/substack-post-media[^&]+)&quot;/)?.[1];
 let cover = null;
+let original = null;
 if (coverSrc) {
-  cover = `assets/covers/${slug}.jpg`;
+  original = `assets/covers/${slug}.jpg`;
+  cover = `assets/covers/${slug}.png`;
   await mkdir(new URL("assets/covers/", root), { recursive: true });
   const img = await fetch(coverSrc.replace(/^https:\/\/substack-post-media/, "https://substackcdn.com/image/fetch/w_1456,c_limit,f_jpg,q_auto:good/https://substack-post-media"));
-  await writeFile(new URL(cover, root), Buffer.from(await img.arrayBuffer()));
+  await writeFile(new URL(original, root), Buffer.from(await img.arrayBuffer()));
+  execFileSync(process.execPath, [
+    fileURLToPath(new URL("scripts/dither.mjs", root)),
+    fileURLToPath(new URL(original, root)),
+    fileURLToPath(new URL(cover, root)),
+    "--preset", "cover",
+  ], { stdio: "inherit" });
 }
 
 body = body
@@ -34,7 +44,7 @@ body = body
   .replace(/<div class="captioned-image-container">[\s\S]*?<\/figure><\/div>/g, (fig) => {
     const src = fig.match(/&quot;src&quot;:&quot;([^&]+)&quot;/)[1];
     const caption = fig.match(/<figcaption[^>]*>([\s\S]*?)<\/figcaption>/)?.[1];
-    const local = src === coverSrc ? `../${cover}` : src;
+    const local = src === coverSrc ? `../${original}` : src;
     return `<figure><img src="${local}" alt="" loading="lazy">${caption ? `<figcaption>${caption}</figcaption>` : ""}</figure>`;
   })
   .replace(/<p><strong>([^<]+)<\/strong><br\/?>/g, (_, h) => `<h2 id="${slugify(h)}">${h}</h2><p>`)
