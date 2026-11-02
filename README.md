@@ -21,7 +21,17 @@ node scripts/import-substack.mjs https://jatin564991.substack.com/p/<post-slug>
 node scripts/build.mjs
 ```
 
-The import saves the post body to `content/posts/`, saves its cover image to `assets/covers/`, and adds the post to `content/posts.json`. The newest three posts appear on the home page.
+The import saves the post body to `content/posts/`, saves its cover image to `assets/covers/` (the original jpg for the article and a 1-bit dithered png for the cards), and adds the post to `content/posts.json`. The newest three posts appear on the home page.
+
+## Regenerate the portrait
+
+The animated 1-bit portrait and the favicon come from `scripts/dither.mjs`, which needs Google Chrome installed:
+
+```sh
+node scripts/dither.mjs <photo> assets/portrait.png --preset portrait --icon assets/favicon.png
+```
+
+Override any preset value with `--key=value`, for example `--crop=1080,0,1950` (x, y, size in source pixels) or `--gamma=0.7`.
 
 ## Preview locally
 
