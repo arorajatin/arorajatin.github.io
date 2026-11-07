@@ -8,7 +8,7 @@ import { pathToFileURL } from "node:url";
 
 const PRESETS = {
   portrait: { w: 96, h: 96, crop: "1080,0,1950", frames: 4, vig: "0.34,0.46", gamma: 0.65, sharp: 2 },
-  cover: { w: 320, h: 180, frames: 1, gamma: 0.8, sharp: 1 },
+  cover: { w: 640, h: 360, frames: 1, gamma: 0.8, sharp: 1 },
 };
 const CHROME = process.env.CHROME || "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
 

@@ -73,7 +73,7 @@ h1 { font-size: 34px; line-height: 1.15; font-weight: 600; letter-spacing: -1.2p
 .post-card { margin: 0 0 24px; }
 .post-card a { display: block; text-decoration: none; }
 .post-card a:hover { background: none; color: var(--ink); }
-.post-card img { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border: 1px solid var(--ink); background: #fff; image-rendering: pixelated; }
+.post-card img { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border: 1px solid var(--ink); background: #fff; }
 .post-card h2 { font-size: 18px; line-height: 1.4; font-weight: 500; letter-spacing: -.3px; margin: 12px 0 2px; }
 .post-card a:hover h2 { text-decoration: underline 2px; text-underline-offset: 4px; }
 .post-card .post-meta { font: 12px/1.6 var(--mono); color: var(--muted); margin: 0; }
